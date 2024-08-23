@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: order-processing-demo
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+
+spring.mvc:
+  view:
+    prefix: /WEB-INF/views/
+    suffix: .jsp
+
+aws:
+  sqs:
+    queueName: OrderQueue
+    region: ap-southeast-2
+  sns:
+    topicName: OrderNotifications
+    region: ap-southeast-2

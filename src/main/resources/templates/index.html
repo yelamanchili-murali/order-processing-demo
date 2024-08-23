@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Processing Demo</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Welcome to the Order Processing Demo</h1>
+<p>Choose an action:</p>
+<ul>
+    <li><a th:href="@{/orders/new}">Create a New Order</a></li>
+    <li><a th:href="@{/orders/list}">View All Orders</a></li>
+</ul>
+</body>
+</html>
