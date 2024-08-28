@@ -67,10 +67,9 @@ mvn spring-boot:run
 
 4. Access the UI: Open a web browser and navigate to `http://localhost:8080` to access the application.
 
-#### Additional Information
-* DynamoDB Local: If you prefer to run DynamoDB locally, ensure you update the application.yml with the appropriate endpoint URL.
-* Security: Avoid committing AWS credentials or other sensitive information to your repository. Use environment variables or AWS IAM roles for secure access.
-
 5. Running in offline/test mode
 
 Add `testmode: true` to the `application.yml` to enable an offline mode using a mock service.
+#### Additional Information
+* DynamoDB Local: If you prefer to run DynamoDB locally, ensure you update the application.yml with the appropriate endpoint URL.
+* Security: Avoid committing AWS credentials or other sensitive information to your repository. Use environment variables or AWS IAM roles for secure access.
