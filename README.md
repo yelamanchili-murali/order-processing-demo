@@ -70,3 +70,7 @@ mvn spring-boot:run
 #### Additional Information
 * DynamoDB Local: If you prefer to run DynamoDB locally, ensure you update the application.yml with the appropriate endpoint URL.
 * Security: Avoid committing AWS credentials or other sensitive information to your repository. Use environment variables or AWS IAM roles for secure access.
+
+5. Running in offline/test mode
+
+Add `testmode: true` to the `application.yml` to enable an offline mode using a mock service.

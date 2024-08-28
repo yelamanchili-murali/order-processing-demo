@@ -10,6 +10,12 @@ server:
     whitelabel:
       enabled: false
 
+# enable all actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 spring.mvc:
   view:
@@ -23,3 +29,5 @@ aws:
   sns:
     topicName: OrderNotifications
     region: ap-southeast-2
+
+testmode: true
