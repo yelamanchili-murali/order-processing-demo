@@ -12,6 +12,23 @@ This guide offers a high-level overview of the migration process from AWS to Azu
 
 #### DynamoDB 
 ```java
+// Document POJO
+@DynamoDbBean
+public class Order {
+    private String orderId;
+    private String customerId;
+    private String orderDetails;
+    private String orderStatus;
+
+    @DynamoDbPartitionKey
+    public String getOrderId() {
+        return orderId;
+    }
+}
+
+```
+
+```java
 // Configuration
 @Bean
 public DynamoDbClient dynamoDbClient() {
@@ -69,6 +86,21 @@ public class ApplicationConfig {
 
     public ApplicationConfig(MongoTemplate mongoTemplate, JmsTemplate jmsTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+}
+```
+
+```java
+// Document POJO
+@Dynamo(collection = "Orders")
+public class Order {
+    private String orderId;
+    private String customerId;
+    private String orderDetails;
+    private String orderStatus;
+
+    public String getOrderId() {
+        return orderId;
     }
 }
 ```
@@ -206,5 +238,49 @@ spring:
   cloud:
     azure:
       eventgrid:
-        endpoint: https://neworderstopic.australiaeast-1.eventgrid.azure.net/api/events
+        endpoint: <https://azure-event-grid-endpoint>
+```
+### pom.xml changes for Azure dependencies
+```xml
+    <dependency>
+        <groupId>com.azure.spring</groupId>
+        <artifactId>spring-cloud-azure-starter-servicebus-jms</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.azure.spring</groupId>
+        <artifactId>spring-cloud-azure-starter-eventgrid</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.azure.spring</groupId>
+        <artifactId>spring-cloud-azure-starter-keyvault</artifactId>
+    </dependency>
+```
+
+```xml
+<dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.azure.spring</groupId>
+                <artifactId>spring-cloud-azure-dependencies</artifactId>
+                <version>5.15.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+```
+
+### Azure Key Vault configuration
+```yaml
+# application.yml - Key Vault config - use PropertySource to fetch secrets
+spring:
+  application:
+    name: order-processing-demo
+  cloud:
+    azure:
+      keyvault:
+        secret:
+          property-source-enabled: true
+          property-sources:
+            - endpoint: https://<keyvaultname>.vault.azure.net/
 ```

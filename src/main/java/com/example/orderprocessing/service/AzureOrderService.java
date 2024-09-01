@@ -13,17 +13,17 @@ import java.util.List;
 //@Primary
 @Service
 @ConditionalOnProperty(
-        name = "awsmode",
+        name = "azuremode",
         havingValue = "true"
 )
-public class AwsOrderService implements OrderService {
+public class AzureOrderService implements OrderService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AwsOrderService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AzureOrderService.class);
     private final OrderRepository orderRepository;
     private final QueueService queueService;
     private final NotificationService notificationService;
 
-    public AwsOrderService(OrderRepository orderRepository, QueueService queueService, NotificationService notificationService) {
+    public AzureOrderService(OrderRepository orderRepository, QueueService queueService, NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.queueService = queueService;
         this.notificationService = notificationService;
@@ -31,31 +31,24 @@ public class AwsOrderService implements OrderService {
 
     @Override
     public Order createOrder(String customerId, String orderDetails) {
-        Order order = new Order();
-        order.setOrderId(Utils.generateUUID());
-        order.setCustomerId(customerId);
-        order.setOrderDetails(orderDetails);
-        order.setOrderStatus("CREATED");
-
-        orderRepository.saveOrder(order);
+        Order newOrder = orderRepository.save(new Order(Utils.generateUUID(), customerId, orderDetails, "CREATED"));
 
         // Send the order details to SQS
-        queueService.sendMessage("Order created: " + order);
-
+        queueService.sendMessage("Order created: " + newOrder);
         // Send notification via SNS
-        notificationService.notify(order);
+        notificationService.notify(newOrder);
 
-        return order;
+        return newOrder;
     }
 
     @Override
     public Order getOrderById(String orderId) {
-        return orderRepository.getOrderById(orderId);
+        return orderRepository.findByOrderId(orderId).orElse(null);
     }
 
     @Override
     public List<Order> getAllOrders() {
-        return orderRepository.getAllOrders();  // Assuming this method is implemented in the repository
+        return orderRepository.findAll();  // Assuming this method is implemented in the repository
     }
 
 }

@@ -1,34 +1,25 @@
 package com.example.orderprocessing.service;
 
+import com.azure.core.util.BinaryData;
+import com.azure.messaging.eventgrid.EventGridEvent;
+import com.azure.messaging.eventgrid.EventGridPublisherClient;
 import com.example.orderprocessing.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.sns.SnsClient;
-import software.amazon.awssdk.services.sns.model.PublishRequest;
 
 @Service
 public class NotificationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
-    private final SnsClient snsClient;
+    private final EventGridPublisherClient<EventGridEvent> client;
 
-    @Value("${aws.sns.topicName}")
-    private String topicName;
-
-    public NotificationService(SnsClient snsClient) {
-        this.snsClient = snsClient;
+    public NotificationService(EventGridPublisherClient<EventGridEvent> client) {
+        this.client = client;
     }
 
     public void notify(Order eventData) {
-        String topicArn = snsClient.createTopic(builder -> builder.name(topicName)).topicArn();
-
-        PublishRequest publishRequest = PublishRequest.builder()
-                .topicArn(topicArn)
-                .message("Order " + eventData.getOrderId() + " has been created.")
-                .build();
-
-        snsClient.publish(publishRequest);
+        EventGridEvent eventGridEvent = new EventGridEvent("Order " + eventData + " has been created.", "Order.Created", BinaryData.fromObject(eventData.getOrderId()), "0.1");
+        client.sendEvent(eventGridEvent);
     }
 }

@@ -1,14 +1,34 @@
-spring:
-  application:
-    name: order-processing-demo
-  thymeleaf:
-    cache: false
-
 server:
   port: 8080
   error:
     whitelabel:
       enabled: false
+
+spring:
+  application:
+    name: order-processing-demo
+  thymeleaf:
+    cache: false
+  data:
+    mongodb:
+      database: migrationdb
+      uri: ${mongoconnection-uri}
+  jms:
+    servicebus:
+      connection-string: ${servicebusconnection-uri}
+      pricing-tier: Standard
+    listener:
+      receive-timeout: 60000
+  cloud:
+    azure:
+      eventgrid:
+        endpoint: https://neworderstopic.australiaeast-1.eventgrid.azure.net/api/events
+      keyvault:
+        secret:
+          property-source-enabled: true
+          property-sources:
+            - endpoint: https://migrationkv1.vault.azure.net/
+
 
 # enable all actuator endpoints
 management:
@@ -22,13 +42,5 @@ spring.mvc:
     prefix: /WEB-INF/views/
     suffix: .jsp
 
-aws:
-  sqs:
-    queueName: OrderQueue
-    region: ap-southeast-2
-  sns:
-    topicName: OrderNotifications
-    region: ap-southeast-2
-
-awsmode: false
+azuremode: true
 mockmode: false
