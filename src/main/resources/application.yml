@@ -30,4 +30,5 @@ aws:
     topicName: OrderNotifications
     region: ap-southeast-2
 
-testmode: true
+awsmode: false
+mockmode: false
