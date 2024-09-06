@@ -71,5 +71,11 @@ mvn spring-boot:run
 
 Add `testmode: true` to the `application.yml` to enable an offline mode using a mock service.
 #### Additional Information
+
 * DynamoDB Local: If you prefer to run DynamoDB locally, ensure you update the application.yml with the appropriate endpoint URL.
 * Security: Avoid committing AWS credentials or other sensitive information to your repository. Use environment variables or AWS IAM roles for secure access.
+
+## Post-migration: Running with Azure services
+Post-migration, create an Azure Service principal and provide the Client Id, Client Secret and Azure tenant id as JVM options. 
+This allows the application to connect to Key vault to retrieve the secrets and bind to the property placeholders for Servicebus and Mongo conenction URIs. 
+JVM Options: `-DAZURE_CLIENT_ID=<client-id> -DAZURE_CLIENT_SECRET=<client-secret> -DAZURE_TENANT_ID=<azure-tenant-id>`
